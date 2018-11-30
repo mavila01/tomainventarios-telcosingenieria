@@ -1,10 +1,36 @@
 package telcos.proyectos.tomainventarios;
 
+import android.os.AsyncTask;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static telcos.proyectos.tomainventarios.utilidades.ClienteWeb;
+
 public class CodigosRepository {
+
+    String IP = "http://localhost";
+    String PUERTO_HOST = "";
+    String CARPETA = "/Toma_Inventario/app";
+    //Rutas web services
+
+    String GET_MATERIALES = IP + PUERTO_HOST + CARPETA + "/obtener_materiales.php";
+
+    ObtenerWebService hiloconexion;
+
     private static CodigosRepository repository = new CodigosRepository();
     private HashMap<String, Codigos> codis = new HashMap<>();
 
@@ -38,5 +64,46 @@ public class CodigosRepository {
 
     public List<Codigos> getCodigos() {
         return new ArrayList<>(codis.values());
+    }
+
+
+    public class ObtenerWebService extends AsyncTask<String, Void, String>{
+        @Override
+        protected String doInBackground(String... params) {
+            String cadena = params[0];
+            URL url = null;
+            String muestra = "";
+            try {
+                JSONObject respuestaJSON = ClienteWeb(cadena,null);
+                int resultJSON = respuestaJSON.getInt("estado");
+                if (resultJSON == 1) {
+                    JSONArray colorJSON = respuestaJSON.getJSONArray("color");
+                    for (int i = 0; i < colorJSON.length(); i++) {
+                        muestra = colorJSON.getJSONObject(i).getString("co_descripcion");
+
+                    }
+                }
+            } catch (
+                    JSONException e) {
+                e.printStackTrace();
+            }
+
+           return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+        }
     }
 }
