@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class utilidades {
+
     public static JSONObject ClienteWeb(String direccionURL,JSONObject jsonParam) {
 
         URL url = null;
@@ -42,7 +43,7 @@ public class utilidades {
                 writer.write(jsonParam.toString());
                 writer.flush();
                 writer.close();
-            } else {
+            }else {
                 urlConn.setRequestProperty("User-Agent","Mozilla/5.0" +
                         "(Linux; Android 1.5; es-ES) Ejemplo HTTP");
             }

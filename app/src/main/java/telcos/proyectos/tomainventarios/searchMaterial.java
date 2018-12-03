@@ -1,24 +1,19 @@
 package telcos.proyectos.tomainventarios;
 
 import android.annotation.SuppressLint;
-import android.app.SearchManager;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 
 
 public class searchMaterial extends Fragment
-        implements SearchView.OnQueryTextListener{
+        implements SearchView.OnQueryTextListener {
 
     public searchMaterial() {
         // Required empty public constructor
@@ -27,7 +22,7 @@ public class searchMaterial extends Fragment
     private SearchView mSearchView;
     private ListView mListView;
 
-   // private final String[] mStrings = { "Google", "Apple", "Samsung", "Sony", "LG", "HTC", "Google", "Google", "Google", "Google", "Google" };
+    // private final String[] mStrings = { "Google", "Apple", "Samsung", "Sony", "LG", "HTC", "Google", "Google", "Google", "Google", "Google" };
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container,
@@ -67,12 +62,12 @@ public class searchMaterial extends Fragment
         int totalHeight = 0;
         View view = null;
         for (int i = 0; i < listAdapter.getCount(); i++) {
-            view = listAdapter.getView(i, view, listView);
+            view = listAdapter.getView(i,view,listView);
             if (i == 0) view.setLayoutParams(new
                     ViewGroup.LayoutParams(desiredWidth,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
 
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            view.measure(desiredWidth,View.MeasureSpec.UNSPECIFIED);
             totalHeight += view.getMeasuredHeight();
         }
 

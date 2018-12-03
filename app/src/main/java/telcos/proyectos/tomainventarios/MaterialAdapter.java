@@ -22,8 +22,8 @@ public class MaterialAdapter extends ArrayAdapter<Codigos> {
 
     public MaterialAdapter(Context context,List<Codigos> objects) {
         super(context,0,objects);
-        this.original=new ArrayList<Codigos>(objects);
-        this.fitems=new ArrayList<Codigos>(objects);
+        this.original = new ArrayList<Codigos>(objects);
+        this.fitems = new ArrayList<Codigos>(objects);
     }
 
     @SuppressLint("SetTextI18n")
@@ -44,8 +44,8 @@ public class MaterialAdapter extends ArrayAdapter<Codigos> {
 
         TextView codigotx = (TextView) convertView.findViewById(R.id.tv_codigo);
         TextView descripciontx = (TextView) convertView.findViewById(R.id.tv_descipcion);
-      final EditText cantidadEdit = (EditText) convertView.findViewById(R.id.EditTextCantidad);
-         final Codigos cod = getItem(position);
+        final EditText cantidadEdit = (EditText) convertView.findViewById(R.id.EditTextCantidad);
+        final Codigos cod = getItem(position);
 
         assert cod != null;
         cantidadEdit.setText(Integer.toString(cod.getmCant()));
@@ -55,9 +55,9 @@ public class MaterialAdapter extends ArrayAdapter<Codigos> {
             @Override
             public void onFocusChange(View view,boolean b) {
                 if (view != null && !b) {
-                        try {
-                            cod.setmCant(Integer.parseInt((cantidadEdit.getText().toString())));
-                        } catch (Exception ignored) {
+                    try {
+                        cod.setmCant(Integer.parseInt((cantidadEdit.getText().toString())));
+                    } catch (Exception ignored) {
                     }
                 }
             }
@@ -74,56 +74,51 @@ public class MaterialAdapter extends ArrayAdapter<Codigos> {
 
         return filter;
     }
-    private class MaterialesFilter extends Filter{
 
-    MaterialesFilter() {
-        super();
-    }
+    private class MaterialesFilter extends Filter {
 
-    @Override
-    protected FilterResults performFiltering(CharSequence charSequence) {
-        FilterResults results = new FilterResults();
-        String prefix = charSequence.toString().toLowerCase();
-
-        if (prefix.length() == 0)
-        {
-            ArrayList<Codigos> list = new ArrayList<Codigos>(original);
-            results.values = list;
-            results.count = list.size();
+        MaterialesFilter() {
+            super();
         }
-        else
-        {
-            final ArrayList<Codigos> list = new ArrayList<Codigos>(original);
-            final ArrayList<Codigos> nlist = new ArrayList<Codigos>();
-            int count = list.size();
 
-            for (int i=0; i<count; i++)
-            {
-                final Codigos material = list.get(i);
-                final String value = material.toString().toLowerCase();
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            FilterResults results = new FilterResults();
+            String prefix = charSequence.toString().toLowerCase();
 
-                if (value.contains(prefix))
-                {
-                    nlist.add(material);
+            if (prefix.length() == 0) {
+                ArrayList<Codigos> list = new ArrayList<Codigos>(original);
+                results.values = list;
+                results.count = list.size();
+            } else {
+                final ArrayList<Codigos> list = new ArrayList<Codigos>(original);
+                final ArrayList<Codigos> nlist = new ArrayList<Codigos>();
+                int count = list.size();
+
+                for (int i = 0; i < count; i++) {
+                    final Codigos material = list.get(i);
+                    final String value = material.toString().toLowerCase();
+
+                    if (value.contains(prefix)) {
+                        nlist.add(material);
+                    }
                 }
+                results.values = nlist;
+                results.count = nlist.size();
             }
-            results.values = nlist;
-            results.count = nlist.size();
+            return results;
         }
-        return results;
-    }
 
-    @Override
-    protected void publishResults(CharSequence charSequence,FilterResults filterResults) {
-        fitems = (ArrayList<Codigos>)filterResults.values;
+        @Override
+        protected void publishResults(CharSequence charSequence,FilterResults filterResults) {
+            fitems = (ArrayList<Codigos>) filterResults.values;
 
-        clear();
-        int count = fitems.size();
-        for (int i=0; i<count; i++)
-        {
-            Codigos material = (Codigos) fitems.get(i);
-            add(material);
+            clear();
+            int count = fitems.size();
+            for (int i = 0; i < count; i++) {
+                Codigos material = (Codigos) fitems.get(i);
+                add(material);
+            }
         }
     }
-}
 }

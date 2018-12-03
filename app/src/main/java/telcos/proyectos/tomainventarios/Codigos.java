@@ -14,7 +14,7 @@ public class Codigos {
     }
 
 
-    public Codigos(String codigo,String descripcion, int mCant) {
+    public Codigos(String codigo,String descripcion,int mCant) {
         mCod = codigo;
         mDesc = descripcion;
         this.mCant = mCant;

@@ -3,11 +3,11 @@ package telcos.proyectos.tomainventarios;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -23,10 +23,10 @@ public class MenuActivity extends AppCompatActivity {
 
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                   // mTextMessage.setText(R.string.title_home);
+                    // mTextMessage.setText(R.string.title_home);
                     fragment = new InfoUserFragment();
                     break;
-                    //return true;
+                //return true;
                 case R.id.navigation_dashboard:
                     fragment = new MenuInventarioFragment();
                     break;
@@ -58,13 +58,13 @@ public class MenuActivity extends AppCompatActivity {
 
     private void setInitialFragment() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.main_fragment_placeholder, new InfoUserFragment());
+        fragmentTransaction.add(R.id.main_fragment_placeholder,new InfoUserFragment());
         fragmentTransaction.commit();
     }
 
     private void replaceFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.main_fragment_placeholder, fragment);
+        fragmentTransaction.replace(R.id.main_fragment_placeholder,fragment);
         fragmentTransaction.commit();
     }
 }
