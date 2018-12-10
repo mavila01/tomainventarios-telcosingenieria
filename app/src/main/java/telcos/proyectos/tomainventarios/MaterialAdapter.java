@@ -45,10 +45,12 @@ public class MaterialAdapter extends ArrayAdapter<Codigos> {
         TextView codigotx = (TextView) convertView.findViewById(R.id.tv_codigo);
         TextView descripciontx = (TextView) convertView.findViewById(R.id.tv_descipcion);
         final EditText cantidadEdit = (EditText) convertView.findViewById(R.id.EditTextCantidad);
+        final EditText serialEdit = (EditText) convertView.findViewById(R.id.EditTextSerial);
         final Codigos cod = getItem(position);
 
         assert cod != null;
         cantidadEdit.setText(Integer.toString(cod.getmCant()));
+        serialEdit.setText(cod.getmSerial());
         codigotx.setText(cod.getmCod());
         descripciontx.setText(cod.getmDesc());
         cantidadEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -59,6 +61,20 @@ public class MaterialAdapter extends ArrayAdapter<Codigos> {
                         cod.setmCant(Integer.parseInt((cantidadEdit.getText().toString())));
                     } catch (Exception ignored) {
                     }
+                }
+            }
+        });
+
+        serialEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view,boolean b) {
+                if (view != null && !b) {
+                    try {
+                        cod.setmSerial(serialEdit.getText().toString());
+                    } catch (Exception ignored) {
+
+                    }
+
                 }
             }
         });

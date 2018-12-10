@@ -1,6 +1,7 @@
 package telcos.proyectos.tomainventarios;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,14 +27,14 @@ import java.util.List;
 import java.util.Objects;
 
 import static telcos.proyectos.tomainventarios.config.GET_ESTADO;
+import static telcos.proyectos.tomainventarios.config.GET_MATERIALES;
 import static telcos.proyectos.tomainventarios.config.GET_NODO;
 import static telcos.proyectos.tomainventarios.utilidades.ClienteWeb;
 
 
 public class MenuInventarioFragment extends Fragment {
 
-
-    public EditText codigoinv;
+    public static EditText codigoinv;
     public Button consulta;
     public Button digitar;
     public LinearLayout LayBodega;
@@ -50,9 +51,12 @@ public class MenuInventarioFragment extends Fragment {
     public ObtenerWebService hiloconexion;
     public ObtenerWebService hiloconexion2;
 
+    public static final String TAG = "MenuInventarios";
+
     public MenuInventarioFragment() {
         // Required empty public constructor
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container,
@@ -114,17 +118,21 @@ public class MenuInventarioFragment extends Fragment {
                 String cadenallamada2 = GET_NODO + "?codigo=" + codigoinv.getText().toString();
                 hiloconexion2.execute(cadenallamada2,"2");
 
-                LayBodega.setVisibility(View.VISIBLE);
-                LayEstadoMat.setVisibility(View.VISIBLE);
+                CodigosRepository.ObtenerMateriales hiloconexion3 = new CodigosRepository.ObtenerMateriales();
+                String cadenallamada3 = GET_MATERIALES + "?codigo=" + codigoinv.getText().toString();
+                hiloconexion3.execute(cadenallamada3);
             }
         });
 
         digitar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 Fragment fragment = null;
                 fragment = new searchMaterial();
                 replaceFragment(fragment);
+
             }
         });
 
@@ -217,6 +225,7 @@ public class MenuInventarioFragment extends Fragment {
     private void replaceFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_fragment_placeholder,fragment);
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 }

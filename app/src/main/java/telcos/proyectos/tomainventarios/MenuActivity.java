@@ -12,13 +12,12 @@ import android.widget.TextView;
 public class MenuActivity extends AppCompatActivity {
 
     private TextView mTextMessage;
-
+    Fragment fragment = null;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment fragment = null;
 
 
             switch (item.getItemId()) {
@@ -26,7 +25,6 @@ public class MenuActivity extends AppCompatActivity {
                     // mTextMessage.setText(R.string.title_home);
                     fragment = new InfoUserFragment();
                     break;
-                //return true;
                 case R.id.navigation_dashboard:
                     fragment = new MenuInventarioFragment();
                     break;
@@ -51,10 +49,10 @@ public class MenuActivity extends AppCompatActivity {
         setInitialFragment();
     }
 
-    @Override
+   /* @Override
     public void onBackPressed() {
 
-    }
+    }*/
 
     private void setInitialFragment() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
