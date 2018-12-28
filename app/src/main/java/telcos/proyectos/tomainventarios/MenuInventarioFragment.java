@@ -1,6 +1,8 @@
 package telcos.proyectos.tomainventarios;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -17,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,9 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static telcos.proyectos.tomainventarios.config.GET_ESTADO;
-import static telcos.proyectos.tomainventarios.config.GET_MATERIALES;
-import static telcos.proyectos.tomainventarios.config.GET_NODO;
+import static telcos.proyectos.tomainventarios.config.*;
 import static telcos.proyectos.tomainventarios.utilidades.ClienteWeb;
 
 
@@ -50,8 +51,9 @@ public class MenuInventarioFragment extends Fragment {
 
     public ObtenerWebService hiloconexion;
     public ObtenerWebService hiloconexion2;
+    public ObtenerInventario hiloconexion3;
 
-    public static final String TAG = "MenuInventarios";
+    ProgressDialog progressDialog;
 
     public MenuInventarioFragment() {
         // Required empty public constructor
@@ -75,8 +77,14 @@ public class MenuInventarioFragment extends Fragment {
         spEstado = (Spinner) view.findViewById(R.id.spinnerEstadoMat);
         spBodega = (Spinner) view.findViewById(R.id.spinnerBodega);
 
+        //serialEdit = (EditText) view.findViewById(R.id.EditTextSerial);
+
         estadolist = new ArrayList<String>();
         nodoslist = new ArrayList<String>();
+
+        progressDialog = new ProgressDialog(getActivity());
+
+//        serialEdit.setVisibility(View.GONE);
 
         spBodega.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -99,6 +107,7 @@ public class MenuInventarioFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent,View view,int position,long id) {
 
+                //int p = position;
                 nodoItem = Objects.toString(id + 1,null);
             }
 
@@ -110,24 +119,15 @@ public class MenuInventarioFragment extends Fragment {
         consulta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                hiloconexion = new ObtenerWebService();
-                String cadenallamada = GET_ESTADO + "?codigo=" + codigoinv.getText().toString();
-                hiloconexion.execute(cadenallamada,"1");
-
-                hiloconexion2 = new ObtenerWebService();
-                String cadenallamada2 = GET_NODO + "?codigo=" + codigoinv.getText().toString();
-                hiloconexion2.execute(cadenallamada2,"2");
-
-                CodigosRepository.ObtenerMateriales hiloconexion3 = new CodigosRepository.ObtenerMateriales();
-                String cadenallamada3 = GET_MATERIALES + "?codigo=" + codigoinv.getText().toString();
-                hiloconexion3.execute(cadenallamada3);
+                hiloconexion3 = new ObtenerInventario();
+                String cadenallamada4 = GET_PREINVENTARIO + "?codigo=" + codigoinv.getText().toString();
+                hiloconexion3.execute(cadenallamada4,"1");
             }
         });
 
         digitar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
 
                 Fragment fragment = null;
                 fragment = new searchMaterial();
@@ -140,23 +140,25 @@ public class MenuInventarioFragment extends Fragment {
         return view;
     }
 
+    @SuppressLint("StaticFieldLeak")
     public class ObtenerWebService extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... params) {
             String cadena = params[0];
             String muestra;
+            String estado;
 
-            if (params[1] == "1") {
+            if (params[1].equals("1")) {
                 try {
                     JSONObject respuestaJSON = ClienteWeb(cadena,null);
 
 
                     int resultJSON = respuestaJSON.getInt("estado");
                     if (resultJSON == 1) {
-                        JSONArray colorJSON = respuestaJSON.getJSONArray("descripcion");
-                        for (int i = 0; i < colorJSON.length(); i++) {
-                            muestra = colorJSON.getJSONObject(i).getString("ESTADOMATERIALDSC");
+                        JSONArray estadoJSON = respuestaJSON.getJSONArray("descripcion");
+                        for (int i = 0; i < estadoJSON.length(); i++) {
+                            muestra = estadoJSON.getJSONObject(i).getString("ESTADOMATERIALDSC");
                             estadolist.add(muestra);
                         }
                     }
@@ -165,7 +167,7 @@ public class MenuInventarioFragment extends Fragment {
                         JSONException e) {
                     e.printStackTrace();
                 }
-            } else if (params[1] == "2") {
+            } else if (params[1].equals("2")) {
 
                 try {
                     JSONObject respuestaJSON = ClienteWeb(cadena,null);
@@ -202,11 +204,87 @@ public class MenuInventarioFragment extends Fragment {
             super.onPostExecute(s);
             populateSpinner(spEstado,estadolist);
             populateSpinner(spBodega,nodoslist);
+            progressDialog.dismiss();
         }
 
         @Override
         protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
+        }
+    }
+
+    public class ObtenerInventario extends AsyncTask<String, Void, String> {
+        @Override
+        protected void onPostExecute(String s) {
+            //super.onPostExecute(s);
+            AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+            if (s.equals("No se obtuvo registro")){
+                alertDialog.setTitle("Alerta!");
+                alertDialog.setMessage(s);
+                alertDialog.show();
+            }else if(s.equals("1")){
+
+                progressDialog.setTitle("Consultando");
+                progressDialog.setMessage("Cargando... Espere un momento");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+
+                hiloconexion = new ObtenerWebService();
+                String cadenallamada = GET_ESTADO + "?codigo=" + codigoinv.getText().toString();
+                hiloconexion.execute(cadenallamada,"1");
+
+                hiloconexion2 = new ObtenerWebService();
+                String cadenallamada2 = GET_NODO + "?codigo=" + codigoinv.getText().toString();
+                hiloconexion2.execute(cadenallamada2,"2");
+
+                CodigosRepository.ObtenerMateriales hiloconexion3 = new CodigosRepository.ObtenerMateriales();
+                String cadenallamada3 = GET_MATERIALES + "?codigo=" + codigoinv.getText().toString();
+                hiloconexion3.execute(cadenallamada3);
+            }else if(s.equals("0")){
+                s = "El inventario no se encuentra activo";
+                alertDialog.setTitle("Alerta!");
+                alertDialog.setMessage(s);
+                alertDialog.show();
+            }else if(s.equals("Se necesita un identificador")){
+                alertDialog.setTitle("Alerta!");
+                alertDialog.setMessage(s);
+                alertDialog.show();
+            }
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String cadena = params[0];
+            String muestra = null;
+
+            if (params[1] == "1") {
+                try {
+                    JSONObject respuestaJSON = ClienteWeb(cadena,null);
+
+
+                    int resultJSON = respuestaJSON.getInt("estado");
+                    if (resultJSON == 1) {
+                        JSONArray estadoJSON = respuestaJSON.getJSONArray("descripcion");
+                        for (int i = 0; i < estadoJSON.length(); i++) {
+                            muestra = estadoJSON.getJSONObject(i).getString("PREPINVENTESTADO");
+                        }
+                    }else if (resultJSON == 2){
+                        muestra = "No se obtuvo registro";
+                    }else if (resultJSON == 3){
+                        muestra = "Se necesita un identificador";
+                    }
+
+                } catch (
+                        JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return muestra;
         }
     }
 

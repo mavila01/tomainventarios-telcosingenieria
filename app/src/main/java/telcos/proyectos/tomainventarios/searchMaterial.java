@@ -1,10 +1,18 @@
 package telcos.proyectos.tomainventarios;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -21,6 +29,12 @@ public class searchMaterial extends Fragment
 
     private SearchView mSearchView;
     private ListView mListView;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     // private final String[] mStrings = { "Google", "Apple", "Samsung", "Sony", "LG", "HTC", "Google", "Google", "Google", "Google", "Google" };
     @SuppressLint("ClickableViewAccessibility")
@@ -103,4 +117,41 @@ public class searchMaterial extends Fragment
         }
         return true;
     }
+
+       public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main, menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+
+//        String message = "You click fragment ";
+
+        if(itemId == R.id.guardar_digitacion)
+        {
+//            message += "Search menu";
+        }else if(itemId == R.id.cancelar_digitacion)
+        {
+            //this.getActivity().finish();
+            Fragment fragment = new searchMaterial();
+            removeFragment(fragment);
+//            message += "News menu";
+        }
+
+/*        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+        alertDialog.setMessage(message);
+        alertDialog.show();
+*/
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void removeFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.remove(fragment);
+        fragmentTransaction.commit();
+    }
+
+
 }

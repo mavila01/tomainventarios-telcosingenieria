@@ -52,4 +52,8 @@
     <string name="contrase_a">Contraseña</string>
     <string name="digitacion_de_materiales">Digitacion de materiales</string>
     <string name="serial">Serial</string>
+    <string name="mas">+</string>
+    <string name="guardar_digitacion">Guardar digitación</string>
+    <string name="cancelar_digitacion">Cancelar digitación</string>
+    <string name="cerrar">Cerrar</string>
 </resources>

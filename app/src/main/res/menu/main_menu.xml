@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="telcos.proyectos.formularioserweb.MainActivity">
+
+    <group>
+    <item
+        android:id="@+id/cerrarsesion"
+        android:orderInCategory="100"
+        android:title="@string/cerrarsesion"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/cerrar"
+        android:orderInCategory="100"
+        android:title="@string/cerrar"
+        app:showAsAction="never" />
+    </group>
+</menu>

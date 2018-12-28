@@ -2,18 +2,23 @@ package telcos.proyectos.tomainventarios;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class MaterialAdapter extends ArrayAdapter<Codigos> {
     private ArrayList<Codigos> original;
@@ -46,13 +51,30 @@ public class MaterialAdapter extends ArrayAdapter<Codigos> {
         TextView descripciontx = (TextView) convertView.findViewById(R.id.tv_descipcion);
         final EditText cantidadEdit = (EditText) convertView.findViewById(R.id.EditTextCantidad);
         final EditText serialEdit = (EditText) convertView.findViewById(R.id.EditTextSerial);
+        final Button masSerial = (Button) convertView.findViewById(R.id.masSeriales);
         final Codigos cod = getItem(position);
 
+
+
+
+
         assert cod != null;
+
         cantidadEdit.setText(Integer.toString(cod.getmCant()));
         serialEdit.setText(cod.getmSerial());
         codigotx.setText(cod.getmCod());
         descripciontx.setText(cod.getmDesc());
+        int idSerial = cod.getmIdSerial();
+        if(idSerial == 0) {
+            serialEdit.setVisibility(View.GONE);
+            masSerial.setVisibility(View.GONE);
+        }else{
+            serialEdit.setVisibility(View.VISIBLE);
+            masSerial.setVisibility(View.VISIBLE);
+        }
+
+
+
         cantidadEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view,boolean b) {
@@ -76,6 +98,13 @@ public class MaterialAdapter extends ArrayAdapter<Codigos> {
                     }
 
                 }
+            }
+        });
+
+        masSerial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
 
@@ -137,4 +166,6 @@ public class MaterialAdapter extends ArrayAdapter<Codigos> {
             }
         }
     }
+
+
 }

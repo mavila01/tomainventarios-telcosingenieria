@@ -42,7 +42,6 @@ public class CodigosRepository {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            // populateSpinner()
         }
 
         @Override
@@ -63,9 +62,11 @@ public class CodigosRepository {
                         descripcion = codigoJSON.getJSONObject(i).getString("DESCRIPCION");
                         serial = codigoJSON.getJSONObject(i).getString("REQSERIAL");
 
-
-
-                        saveCodigos(new Codigos(codigo,descripcion,0,null));
+                       if(serial.equals("1")) {
+                           saveCodigos(new Codigos(codigo,descripcion,0,null,1));
+                        }else {
+                           saveCodigos(new Codigos(codigo,descripcion,0,null,0));
+                       }
                     }
                 }
 

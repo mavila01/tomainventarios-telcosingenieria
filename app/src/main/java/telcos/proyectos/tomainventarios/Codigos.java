@@ -5,6 +5,7 @@ public class Codigos {
     private String mDesc;
     private int mCant;
     private String mSerial;
+    private int mIdSerial;
 
     public int getmCant() {
         return mCant;
@@ -15,11 +16,12 @@ public class Codigos {
     }
 
 
-    public Codigos(String codigo,String descripcion,int mCant,String mSerial) {
+    public Codigos(String codigo,String descripcion,int mCant,String mSerial,int mIdSerial) {
         mCod = codigo;
         mDesc = descripcion;
         this.mCant = mCant;
         this.mSerial = mSerial;
+        this.mIdSerial = mIdSerial;
     }
 
     public String getmCod() {
@@ -44,6 +46,7 @@ public class Codigos {
                 "mCod=' " + mCod + " \'" +
                 ", mDesc=' " + mDesc + " \'" +
                 ", mSerial=' "+ mSerial + "\'"+
+                ", mIdSerial=' "+ mIdSerial + "\'"+
                 '}';
         System.out.printf(salida);
         return salida;
@@ -55,5 +58,13 @@ public class Codigos {
 
     public void setmSerial(String mSerial) {
         this.mSerial = mSerial;
+    }
+
+    public int getmIdSerial() {
+        return mIdSerial;
+    }
+
+    public void setmIdSerial(int mIdSerial) {
+        this.mIdSerial = mIdSerial;
     }
 }
