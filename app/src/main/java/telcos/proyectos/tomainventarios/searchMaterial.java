@@ -1,13 +1,14 @@
 package telcos.proyectos.tomainventarios;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.app.FragmentManager;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,9 +16,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import static telcos.proyectos.tomainventarios.MenuInventarioFragment.codigoinv;
+import static telcos.proyectos.tomainventarios.MenuInventarioFragment.nameBodega;
+import static telcos.proyectos.tomainventarios.MenuInventarioFragment.nameEstado;
+import static telcos.proyectos.tomainventarios.config.INSERT_INVENT;
+import static telcos.proyectos.tomainventarios.utilidades.ClienteWeb;
 
 
 public class searchMaterial extends Fragment
@@ -29,11 +41,17 @@ public class searchMaterial extends Fragment
 
     private SearchView mSearchView;
     private ListView mListView;
+    private EditText eBodega;
+    ProgressDialog progressDialog;
+
+    ObtenerWebService hiloconexion;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+
     }
 
     // private final String[] mStrings = { "Google", "Apple", "Samsung", "Sony", "LG", "HTC", "Google", "Google", "Google", "Google", "Google" };
@@ -46,10 +64,14 @@ public class searchMaterial extends Fragment
 
         mSearchView = (SearchView) view.findViewById(R.id.search_view);
         mListView = (ListView) view.findViewById(R.id.list_view);
+        eBodega = (EditText) view.findViewById(R.id.editTextBodega);
+
+        progressDialog = new ProgressDialog(getActivity());
 
         MaterialAdapter mListAdapter = new MaterialAdapter(getActivity(),
                 CodigosRepository.getInstance().getCodigos());
 
+        eBodega.setText((CharSequence) nameBodega);
 
       /*  ArrayAdapter<Codigos> mListAdapter = new MaterialAdapter(getActivity(),
                 CodigosRepository.getInstance().getCodigos());
@@ -59,10 +81,26 @@ public class searchMaterial extends Fragment
                 android.R.layout.simple_list_item_1,
                 mStrings);*/
 
+
         mListView.setAdapter(mListAdapter);
+
         mListView.setTextFilterEnabled(true);
         setupSearchView();
         setListViewHeightBasedOnChildren(mListView);
+
+        int count = mListView.getAdapter().getCount();
+        for (int i = 0; i < count; i++) {
+
+            Object item = mListView.getItemAtPosition(i);
+            mListView.getAdapter().getItem(i);
+            for (int j = 0; j < count; j++) {
+
+            }
+
+
+        }
+
+
 
         return view;
     }
@@ -118,22 +156,47 @@ public class searchMaterial extends Fragment
         return true;
     }
 
-       public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
+    public void onCreateOptionsMenu(Menu menu,MenuInflater inflater) {
+        inflater.inflate(R.menu.main,menu);
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
 
 //        String message = "You click fragment ";
 
-        if(itemId == R.id.guardar_digitacion)
-        {
+        if (itemId == R.id.guardar_digitacion) {
+
+            int count = mListView.getAdapter().getCount();
+            MaterialAdapter ma = (MaterialAdapter) mListView.getAdapter();
+
+            //ArrayList<Codigos> items = ma.getOriginal();
+
+            for (int i = 0; i < count; i++) {
+                Codigos a = (Codigos) mListView.getItemAtPosition(i);
+
+                if(!a.getmCant().equals("")) {
+
+                    hiloconexion = new ObtenerWebService();
+                    hiloconexion.execute(INSERT_INVENT,"1",
+                            codigoinv.getText().toString(),
+                            nameBodega.toString(),
+                            nameBodega.toString(), //descripcion bodega
+                            a.getmCod(),
+                            a.getmDesc(),
+                            a.getmSerial(),
+                            String.valueOf(a.getmCant()),
+                            nameEstado.toString(),
+                            nameBodega.toString(),//Id estado
+                            "Usuario de prueba"
+                    );
+                }
+            }
 //            message += "Search menu";
-        }else if(itemId == R.id.cancelar_digitacion)
-        {
+        } else if (itemId == R.id.cancelar_digitacion) {
             //this.getActivity().finish();
             Fragment fragment = new searchMaterial();
             removeFragment(fragment);
@@ -151,6 +214,67 @@ public class searchMaterial extends Fragment
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.remove(fragment);
         fragmentTransaction.commit();
+    }
+
+    public class ObtenerWebService extends AsyncTask<String, Void, String> {
+        @Override
+        protected void onPreExecute() {
+            progressDialog.setTitle("Registrando");
+            progressDialog.setMessage("Cargando... Espere un momento");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+           //super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+
+            Toast to = Toast.makeText(getActivity(),s,Toast.LENGTH_LONG);
+            to.show();
+            progressDialog.dismiss();
+            //super.onPostExecute(s);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String cadena = params[0];
+            String devuelve = "";
+            if (params[1] == "1") {  //Insert
+
+                try {
+
+                    JSONObject jsonParam = new JSONObject();
+                    jsonParam.put("CODIGO_INVENTARIO",params[2]);
+                    jsonParam.put("NAME_BODEGA",params[3]);
+                    jsonParam.put("DESCRIPCION_BODEGA",params[4]);
+                    jsonParam.put("CODIGO_MATERIAL",params[5]);
+                    jsonParam.put("DESCRIPCION_MATERIAL",params[6]);
+                    jsonParam.put("SERIAL",params[7]);
+                    jsonParam.put("CANTIDAD",params[8]);
+                    jsonParam.put("ESTADO_MATERIAL",params[9]);
+                    jsonParam.put("ID_ESTADO_MATERIAL",params[10]);
+                    jsonParam.put("USUARIO",params[11]);
+
+                    JSONObject respuestaJSON = ClienteWeb(cadena,jsonParam);
+
+                    int resultJSON = respuestaJSON.getInt("estado");
+
+
+                    if (resultJSON == 1) {
+                        devuelve = "Inventario registrado correctamente"; //Registrado Correctamente
+                    } else {
+                        devuelve = "Conexion fallida"; //Conexion Fallida
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return devuelve;
+
+            }
+
+            return null;
+        }
     }
 
 

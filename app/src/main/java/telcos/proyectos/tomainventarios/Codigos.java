@@ -1,22 +1,24 @@
 package telcos.proyectos.tomainventarios;
 
-public class Codigos {
+import android.support.annotation.NonNull;
+
+public class Codigos implements Comparable<Codigos> {
     private String mCod;
     private String mDesc;
-    private int mCant;
+    private String mCant;
     private String mSerial;
     private int mIdSerial;
 
-    public int getmCant() {
+    public String getmCant() {
         return mCant;
     }
 
-    public void setmCant(int mCant) {
+    public void setmCant(String mCant) {
         this.mCant = mCant;
     }
 
 
-    public Codigos(String codigo,String descripcion,int mCant,String mSerial,int mIdSerial) {
+    public Codigos(String codigo,String descripcion,String mCant,String mSerial,int mIdSerial) {
         mCod = codigo;
         mDesc = descripcion;
         this.mCant = mCant;
@@ -48,7 +50,7 @@ public class Codigos {
                 ", mSerial=' "+ mSerial + "\'"+
                 ", mIdSerial=' "+ mIdSerial + "\'"+
                 '}';
-        System.out.printf(salida);
+        //System.out.printf(salida);
         return salida;
     }
 
@@ -66,5 +68,11 @@ public class Codigos {
 
     public void setmIdSerial(int mIdSerial) {
         this.mIdSerial = mIdSerial;
+    }
+
+    @Override
+    public int compareTo(@NonNull Codigos o) {
+
+        return this.mDesc.compareTo(o.mDesc);
     }
 }

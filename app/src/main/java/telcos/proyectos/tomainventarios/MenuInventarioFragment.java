@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -41,8 +42,10 @@ public class MenuInventarioFragment extends Fragment {
     public LinearLayout LayBodega;
     public LinearLayout LayEstadoMat;
     @SuppressLint("StaticFieldLeak")
-    public Spinner spEstado;
-    public Spinner spBodega;
+    public static Spinner spEstado;
+    public static Spinner spBodega;
+    public static Object nameBodega;
+    public static Object nameEstado;
     String estadoItem = "";
     String nodoItem = "";
 
@@ -59,6 +62,15 @@ public class MenuInventarioFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        estadolist = new ArrayList<String>();
+        nodoslist = new ArrayList<String>();
+
+
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container,
@@ -79,9 +91,6 @@ public class MenuInventarioFragment extends Fragment {
 
         //serialEdit = (EditText) view.findViewById(R.id.EditTextSerial);
 
-        estadolist = new ArrayList<String>();
-        nodoslist = new ArrayList<String>();
-
         progressDialog = new ProgressDialog(getActivity());
 
 //        serialEdit.setVisibility(View.GONE);
@@ -92,14 +101,17 @@ public class MenuInventarioFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent,View view,int position,long id) {
 
-                estadoItem = Objects.toString(id + 1,null);
+                nameBodega = parent.getItemAtPosition(position);
+                /*Toast.makeText(getActivity(), nameBodega.toString(),
+                        Toast.LENGTH_SHORT).show();*/
+
+                nodoItem = Objects.toString(id + 1,null);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
 
         spEstado.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -108,7 +120,8 @@ public class MenuInventarioFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent,View view,int position,long id) {
 
                 //int p = position;
-                nodoItem = Objects.toString(id + 1,null);
+                nameEstado = parent.getItemAtPosition(position);
+                estadoItem = Objects.toString(id + 1,null);
             }
 
             @Override
@@ -129,6 +142,7 @@ public class MenuInventarioFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
+                onPause();
                 Fragment fragment = null;
                 fragment = new searchMaterial();
                 replaceFragment(fragment);
@@ -175,9 +189,9 @@ public class MenuInventarioFragment extends Fragment {
 
                     int resultJSON = respuestaJSON.getInt("estado");
                     if (resultJSON == 1) {
-                        JSONArray colorJSON = respuestaJSON.getJSONArray("descripcion");
-                        for (int i = 0; i < colorJSON.length(); i++) {
-                            muestra = colorJSON.getJSONObject(i).getString("Caption");
+                        JSONArray nombreJSON = respuestaJSON.getJSONArray("descripcion");
+                        for (int i = 0; i < nombreJSON.length(); i++) {
+                            muestra = nombreJSON.getJSONObject(i).getString("Caption");
                             nodoslist.add(muestra);
                         }
                     }
@@ -240,6 +254,9 @@ public class MenuInventarioFragment extends Fragment {
                 CodigosRepository.ObtenerMateriales hiloconexion3 = new CodigosRepository.ObtenerMateriales();
                 String cadenallamada3 = GET_MATERIALES + "?codigo=" + codigoinv.getText().toString();
                 hiloconexion3.execute(cadenallamada3);
+
+
+
             }else if(s.equals("0")){
                 s = "El inventario no se encuentra activo";
                 alertDialog.setTitle("Alerta!");
@@ -250,6 +267,8 @@ public class MenuInventarioFragment extends Fragment {
                 alertDialog.setMessage(s);
                 alertDialog.show();
             }
+
+
         }
 
         @Override

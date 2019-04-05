@@ -63,9 +63,9 @@ public class CodigosRepository {
                         serial = codigoJSON.getJSONObject(i).getString("REQSERIAL");
 
                        if(serial.equals("1")) {
-                           saveCodigos(new Codigos(codigo,descripcion,0,null,1));
+                           saveCodigos(new Codigos(codigo,descripcion,"",null,1));
                         }else {
-                           saveCodigos(new Codigos(codigo,descripcion,0,null,0));
+                           saveCodigos(new Codigos(codigo,descripcion,"",null,0));
                        }
                     }
                 }
